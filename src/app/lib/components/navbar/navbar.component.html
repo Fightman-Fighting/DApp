@@ -3,6 +3,27 @@
         <app-logo></app-logo>
 
         <nav class="flex items-center space-x-2">
+            <!-- Wallet connect -->
+            <ng-container *ngIf="isMetaMaskInstalled$ | async; else noMetaMask">
+                <div *ngIf="address$ | async as addr; else connectBtn" class="flex items-center space-x-2">
+                    <span class="px-3 py-1 rounded bg-base/5 text-sm">{{ addr | slice:0:6 }}...{{ addr | slice:-4 }}</span>
+                    <button class="btn btn-ghost" (click)="onClickDisconnect()">Disconnect</button>
+                </div>
+                <ng-template #connectBtn>
+                    <button class="btn btn-primary" (click)="onClickConnect()">Connect Wallet</button>
+                </ng-template>
+            </ng-container>
+            <ng-template #noMetaMask>
+                <a class="text-sm text-warning" href="https://metamask.io/download.html" target="_blank" rel="noreferrer">Install MetaMask</a>
+            </ng-template>
+
+            <!-- Network name and warning -->
+            <div *ngIf="networkName$ | async as netName" class="text-sm text-muted">{{ netName }}</div>
+            <div *ngIf="(isSupportedNetwork$ | async) === false" class="flex items-center space-x-2">
+                <div class="text-sm text-red-500">Unsupported network</div>
+                <button class="btn btn-sm btn-warning" (click)="onClickSwitchNetwork()">Switch Network</button>
+            </div>
+
             <button
                 data-cy="logout-button"
                 class="btn btn-secondary"
